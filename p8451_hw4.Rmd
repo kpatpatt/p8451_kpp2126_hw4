@@ -112,18 +112,33 @@ df.train<-df_tidy[train.index,]
 df.test<-df_tidy[-train.index,]
 ```
 ```{r lm model}
-#lmodel 1: predictors: age, diabetes, asthma and BMI
-model1 <- lm(healthydays ~ agegroup + diabetes + asthma + bmi, 
+#RQ: Predict the number of days in a month an individual reported having good physical health
+
+##training
+#lmodel 1: predictors: age, days walked in past 7 days, asthma and BMI
+model1 <- lm(healthydays ~ agegroup + sex + hypertension + diabetes + asthma, 
               data = df.train)
+
 #lmodel 2: predictors: age, tobacco use, alcohol use and diet
-model2 <- lm(healthydays ~ agegroup + smokegtr3 + drinkgtr2 + dietquality, 
+model2 <- lm(healthydays ~ agegroup + sex + smokegtr3 + drinkgtr2 + dietquality, 
               data = df.train)
+
+##testing
+model1.test <- lm(healthydays ~ agegroup + sex + gpaq11days + povertygroup + bmi, 
+              data = df.test)
+
+model1summary <- summary(model1.test)
+model1summary
+mean(model1summary$residuals^2) #[1] 53.81417
+
+model2.test <- lm(healthydays ~ agegroup + sex + smokegtr3 + drinkgtr2 + dietquality, 
+              data = df.test)
+model2summary <- summary(model2.test)
+model2summary
+mean(model2summary$residuals^2) #[1] 53.85212
 ```
 
-
-```{r model}
-summary(model1)
-```
+Both models perform relatively the same with slight change in their MSE, Model 1's MSE less than Model 2's MSE, but it's negligible. I retained the age group and sex in both models but differed by the final three predictors where in model 1 the predictors are chronic morbidity factors while model 2 has lifestyle factors. I would recommend model 1 due to the slightly less MSE.
 
 ## Part II: Conducting an Unsupervised Analysis
 
@@ -139,6 +154,6 @@ Pretend that the data are from 2020 and not 1973. Describe one research question
 df2 = USArrests
 
 set.seed(123)
- 
+
 ```
 
